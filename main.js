@@ -4,10 +4,10 @@ var received = $('#received');
 
 
 var socket = new WebSocket("ws://localhost:8080/ws");
- 
-socket.onopen = function(){  
-  console.log("connected"); 
-}; 
+
+socket.onopen = function(){
+  console.log("connected");
+};
 
 socket.onmessage = function (message) {
   console.log("receiving: " + message.data);
@@ -16,7 +16,7 @@ socket.onmessage = function (message) {
 };
 
 socket.onclose = function(){
-  console.log("disconnected"); 
+  console.log("disconnected");
 };
 
 var sendMessage = function(message) {
@@ -40,5 +40,11 @@ $('#clear').click(function(){
   received.empty();
 });
 
+
+$('#received').bind("DOMSubtreeModified",function(){
+    $('#received').animate({
+        scrollTop: $('#received').get(0).scrollHeight
+    }, 0);
+});
 
 });
