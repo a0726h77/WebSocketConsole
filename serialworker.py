@@ -18,7 +18,7 @@ class SerialProcess(multiprocessing.Process):
         self.sp.close()
 
     def writeSerial(self, data):
-        self.sp.write(data)
+        self.sp.write(data + '\r\n')
         # time.sleep(1)
 
     def readSerial(self):
@@ -34,7 +34,7 @@ class SerialProcess(multiprocessing.Process):
                 data = self.input_queue.get()
 
                 # send it to the serial device
-                self.writeSerial(data)
+                self.writeSerial(data.encode())
                 print "writing to serial: " + data
 
             # look for incoming serial data
