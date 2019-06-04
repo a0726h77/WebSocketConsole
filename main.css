@@ -1,0 +1,140 @@
+/* chrome apps don't seem to scroll by default. */
+html {
+  overflow-y: scroll;
+}
+
+.distributed-box {
+  display: flex;
+  justify-content: space-between;
+}
+
+.centered {
+  align-content: center;
+}
+
+.lonely-centered {
+  justify-content: space-around;
+  align-content: center;
+}
+
+.flex {
+  flex: auto;
+}
+
+#jog-panel table {
+  display: inline-table;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#txt-command-log, #input-control-cmd {
+  font-family: monospace;
+}
+
+#console-log {
+	font-family: monospace;
+	font-size: smaller;
+  overflow-y: scroll;
+  height: 80vh;
+  min-height: 12em;
+  -webkit-user-select: text;
+}
+
+.log-user-entry {
+  display: block;
+}
+.log-user-entry:before {
+  content: "> ";
+  color: #999;
+}
+
+.btn-estop {
+  border-radius: 50px;
+  border-width: 5px;
+  font-size: 24pt;
+  height: 100px;
+  margin: 20px;
+  width: 100px;
+}
+
+.alert {
+  -webkit-user-select: text;
+}
+
+.is-ack {
+  color: #006600;
+  float: right;
+  margin-top: -3ex;
+  padding-left: 1ex;
+}
+
+#render-canvas {
+  display: block;
+  margin: 0 auto;
+  height: 260px;
+  width: 418px;
+}
+
+@media (min-width: 750px) {
+  #render-canvas {
+    width: 688px;
+  }
+}
+@media (min-width: 970px) {
+  #render-canvas {
+    width: 908px;
+  }
+}
+@media (min-width: 1170px) {
+  #render-canvas {
+    width: 1108px;
+  }
+}
+
+.control-section {
+  margin-bottom: 2em;
+}
+
+
+
+#console-container {
+  padding: 1px;
+}
+
+#console-container .form-group,
+#console-container form {
+  margin: 0;
+}
+
+#bottom-tracker-logs {
+  bottom: 4em;
+  position: absolute;
+  height: 0;
+  width: 0;
+}
+
+#bottom-tracker-renderer {
+  bottom: 6em;
+  position: absolute;
+  height: 0;
+  width: 0;
+}
+
+.block {
+  display: flex;
+  flex-flow: row;
+}
+
+.stack {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+}
+
+.bottom-margin {
+  margin-bottom: 20px;
+}
+
+.wide {
+  width: 100%;
+}

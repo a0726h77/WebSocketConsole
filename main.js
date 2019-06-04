@@ -1,9 +1,9 @@
 $(document).ready(function(){
 
-var received = $('#received');
+var received = $('#console-log');
 
 
-var socket = new WebSocket("ws://localhost:8080/ws");
+var socket = new WebSocket("ws://" + window.location.hostname + ":8080/ws");
 
 socket.onopen = function(){
   console.log("connected");
@@ -31,9 +31,9 @@ var sendMessage = function(message) {
 // send a command to the serial port
 $("#cmd_send").click(function(ev){
   ev.preventDefault();
-  var cmd = $('#cmd_value').val();
+  var cmd = $('#input-control-cmd').val();
   sendMessage({ 'data' : cmd});
-  $('#cmd_value').val("");
+  $('#input-control-cmd').val("");
 });
 
 $('#clear').click(function(){
@@ -41,9 +41,9 @@ $('#clear').click(function(){
 });
 
 
-$('#received').bind("DOMSubtreeModified",function(){
-    $('#received').animate({
-        scrollTop: $('#received').get(0).scrollHeight
+received.bind("DOMSubtreeModified",function(){
+    received.animate({
+        scrollTop: received.get(0).scrollHeight
     }, 0);
 });
 

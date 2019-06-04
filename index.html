@@ -7,20 +7,152 @@
       #sent { width: 500px; }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
     <script type="text/javascript" src="static/main.js"></script>
+    <link rel="stylesheet" href="static/main.css">
   </head>
-  <body>
-  <h1>Websockets serial console</h1>
+  <body id="body">
+    <div class="container">
+      <span class="col-sm-4">
+        <div class="control-section">
+          <h4>emergency stop</h4>
+          <label for="emergency-stop" class="sr-only">emergency-stop</label>
+          <div class="distributed-box lonely-centered">
+            <button id="btn-emergency-stop" name="emergency-stop"
+                                            class="btn btn-danger btn-estop">
+              <span class="glyphicon glyphicon-warning-sign"></span>
+            </button>
+          </div>
+        </div>
 
-  <p>Data received from serial port</p>
-  <div id="received">
-  </div>
-  <button id="clear">Clear</button>
+        <div class="control-section">
+          <h4>jog controls</h4>
 
-  <p>Send data to serial port</p>
-  <form id="sent">
-  	<input type="text" id="cmd_value">
-  	<button id="cmd_send">Send</button>
+          <div class="distributed-box">
+            <div class="stack">
+              <button class="btn btn-default flex">
+                <span class="glyphicon glyphicon-arrow-up"></span>
+                +Z
+              </button>
+              <button class="btn btn-default flex">
+                <span class="glyphicon glyphicon-arrow-down"></span>
+                -Z
+              </button>
+            </div>
+            <div class="block">
+              <div class="stack">
+                <button class="btn btn-default">
+                  <span class="glyphicon glyphicon-chevron-left"></span>
+                  -X
+                </button>
+              </div>
+              <div class="stack">
+                <button class="btn btn-default">
+                  <span class="glyphicon glyphicon-chevron-up"></span>
+                  <div>+Y</div>
+                </button>
+                <button class="btn btn-default">
+                  <div>-Y</div>
+                  <span class="glyphicon glyphicon-chevron-down"></span>
+                </button>
+              </div>
+              <div class="stack">
+                <button class="btn btn-default">
+                  +X
+                  <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <form class="form-inline" role="form" id="form-command-jog">
+              <div class="form-group">
+                <span>
+                  step size <small>()</small>
+                </span>
+                <div class="input-group">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" id="btn-stepsize-down" type="button">-</button>
+                  </span>
+                  <input type="range" name="stepsize" id="input-stepsize" min="-1" max="2" class="form-control">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" id="btn-stepsize-up" type="button">+</button>
+                  </span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="distributed-box">
+            <button class="btn btn-default flex">Home X</button>
+            <button class="btn btn-default flex">Home Y</button>
+            <button class="btn btn-default flex">Home Z</button>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="distributed-box">
+            <button class="btn btn-default flex">Zero X</button>
+            <button class="btn btn-default flex">Zero Y</button>
+            <button class="btn btn-default flex">Zero Z</button>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <h4>spindle controls</h4>
+          <div class="distributed-box">
+            <button class="btn btn-default flex">↻</button>
+            <button class="btn btn-default flex">↺</button>
+            <button class="btn btn-default flex">⊘</button>
+          </div>
+        </div>
+      </span>
+
+
+      <span class="col-sm-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div class="dropdown pull-right">
+              <button class="btn dropdown-toggle" type="button" id="console-menu" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="console-menu">
+                <li role="presentation"><a role="menuitem" tabindex="-1">clear log</a></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1">clear command queue</a></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1">stop waiting for 'ok'</a></li>
+              </ul>
+            </div>
+            console
+            <small id="lbl-enqueued-commands"></small>
+            <span>~</span>
+          </div>
+          <div class="panel-body" id="console-container">
+            <div id="console-log">
+            </div>
+            <form class="form" role="form">
+              <div class="input-group">
+                <input type="text" class="form-control" id="input-control-cmd">
+                <div class="input-group-btn">
+                  <button id="cmd_send" type="submit" class="btn btn-default">send</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </span>
+    </div>
   </form>
   </body>
 </html>
