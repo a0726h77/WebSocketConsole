@@ -35,7 +35,7 @@ html {
 	font-family: monospace;
 	font-size: smaller;
   overflow-y: scroll;
-  height: 80vh;
+  height: 70vh;
   min-height: 12em;
   -webkit-user-select: text;
 }
