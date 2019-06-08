@@ -3,21 +3,7 @@ $(document).ready(function(){
 var received = $('#console-log');
 
 
-var socket = new WebSocket("ws://" + window.location.hostname + ":8080/ws");
-
-socket.onopen = function(){
-  console.log("connected");
-};
-
-socket.onmessage = function (message) {
-  console.log("receiving: " + message.data);
-  received.append(message.data);
-  received.append($('<br/>'));
-};
-
-socket.onclose = function(){
-  console.log("disconnected");
-};
+var socket;
 
 var sendMessage = function(message) {
   console.log("sending:" + message.data);
@@ -27,6 +13,31 @@ var sendMessage = function(message) {
 
 // GUI Stuff
 
+$("#ws-connect").click(function(ev){
+  ev.preventDefault();
+  var address = $('#ws-address').val();
+  socket = new WebSocket("ws://" + address + "/ws");
+
+  socket.onopen = function(){
+    console.log("connected");
+    $('#connection-status').removeClass('label-danger');
+    $('#connection-status').addClass('label-success');
+    $('#connection-status').text('connected');
+  };
+
+  socket.onmessage = function (message) {
+    console.log("receiving: " + message.data);
+    received.append(message.data);
+    received.append($('<br/>'));
+  };
+
+  socket.onclose = function(){
+    console.log("disconnected");
+    $('#connection-status').removeClass('label-success');
+    $('#connection-status').addClass('label-danger');
+    $('#connection-status').text('disconnected');
+  };
+});
 
 // send a command to the serial port
 $("#cmd_send").click(function(ev){
