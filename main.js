@@ -16,7 +16,12 @@ var sendMessage = function(message) {
 $("#ws-connect").click(function(ev){
   ev.preventDefault();
   var address = $('#ws-address').val();
-  socket = new WebSocket("ws://" + address + "/ws");
+
+  if(window.location.protocol == 'https:') {
+      socket = new WebSocket("wss://" + address + "/ws");
+  } else {
+      socket = new WebSocket("ws://" + address + "/ws");
+  }
 
   socket.onopen = function(){
     console.log("connected");
