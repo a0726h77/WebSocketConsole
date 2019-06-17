@@ -35,6 +35,7 @@
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <div class="navbar-form navbar-right">
           <form role="search">
+            <button id="btn-emergency-stop" type="submit" class="btn btn-danger btn-default">E-STOP</button>
             <div class="form-group">
               <input id="ws-address" type="text" class="form-control" value="127.0.0.1:8080" placeholder="WebSocket address">
             </div>
@@ -47,16 +48,6 @@
 
     <div class="container">
       <span class="col-sm-4">
-        <div class="control-section">
-          <h4>emergency stop</h4>
-          <label for="emergency-stop" class="sr-only">emergency-stop</label>
-          <div class="distributed-box lonely-centered">
-            <button id="btn-emergency-stop" name="emergency-stop"
-                                            class="btn btn-danger btn-estop">
-              <span class="glyphicon glyphicon-warning-sign"></span>
-            </button>
-          </div>
-        </div>
 
         <div class="control-section">
           <h4>jog controls</h4>
@@ -127,20 +118,7 @@
         </div>
 
         <div class="control-section">
-          <div class="distributed-box">
-            <button class="btn btn-default flex">Zero X</button>
-            <button class="btn btn-default flex">Zero Y</button>
-            <button class="btn btn-default flex">Zero Z</button>
-          </div>
-        </div>
-
-        <div class="control-section">
-          <h4>spindle controls</h4>
-          <div class="distributed-box">
-            <button class="btn btn-default flex">↻</button>
-            <button class="btn btn-default flex">↺</button>
-            <button class="btn btn-default flex">⊘</button>
-          </div>
+          <img id="cam" width="100%"/>
         </div>
       </span>
 
@@ -178,7 +156,6 @@
       </span>
     </div>
 
-    <img id="cam"/>
   </form>
   </body>
 </html>
