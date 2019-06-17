@@ -5,18 +5,25 @@ import tornado.websocket
 import tornado.gen
 from tornado.options import define, options
 import os
+import io
 import time
 import multiprocessing
 import serialworker
 import json
+import datetime
+
+from PIL import Image
+
+import pygame.camera
+import pygame.image
 
 define("port", default=8080, help="run on the given port", type=int)
 
 clients = []
+img_clients = set()
 
 input_queue = multiprocessing.Queue()
 output_queue = multiprocessing.Queue()
-
 
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -45,6 +52,52 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def check_origin(self, origin):
         return True
 
+
+class ImageWebSocketHandler(tornado.websocket.WebSocketHandler):
+
+    def check_origin(self, origin):
+        # Allow access from every origin
+        return True
+
+    def open(self):
+        img_clients.add(self)
+        print("WebSocket opened from: " + self.request.remote_ip)
+        self.write_message("camera connected")
+
+        pygame.camera.init()
+        camera_name = pygame.camera.list_cameras()[0]
+        self._cam = pygame.camera.Camera(camera_name, (640, 480))
+        self._cam.start()
+
+        tornado.ioloop.IOLoop.instance().add_timeout(datetime.timedelta(seconds=1), self.timeout_loop)
+
+    def on_message(self, message):
+        print 'tornado received from client: %s' % json.dumps(message)
+
+    def on_close(self):
+        img_clients.remove(self)
+
+        print("WebSocket closed from: " + self.request.remote_ip)
+
+        self._cam.stop()
+
+    def timeout_loop(self):
+        jpeg_bytes = self.get_jpeg_image_bytes()
+
+        for c in img_clients:
+            c.write_message(jpeg_bytes, binary=True)
+
+        tornado.ioloop.IOLoop.instance().add_timeout(datetime.timedelta(seconds=30), self.timeout_loop)
+
+    def get_jpeg_image_bytes(self):
+        img = self._cam.get_image()
+        imgstr = pygame.image.tostring(img, "RGB", False)
+        pimg = Image.frombytes("RGB", img.get_size(), imgstr)
+        with io.BytesIO() as bytesIO:
+            pimg.save(bytesIO, "JPEG", quality=70, optimize=True)
+            return bytesIO.getvalue()
+
+
 ## check the queue for pending messages, and rely that to all connected clients
 def checkQueue():
 	if not output_queue.empty():
@@ -62,8 +115,9 @@ if __name__ == '__main__':
 	app = tornado.web.Application(
 	    handlers=[
 	        (r"/", IndexHandler),
-	        (r"/static/(.*)", tornado.web.StaticFileHandler, {'path':  './'}),
-	        (r"/ws", WebSocketHandler)
+	        (r"/static/(.*)", tornado.web.StaticFileHandler, {'path':  './static/'}),
+	        (r"/ws", WebSocketHandler),
+	        (r"/camera", ImageWebSocketHandler)
 	    ]
 	)
 	httpServer = tornado.httpserver.HTTPServer(app)

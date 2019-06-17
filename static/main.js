@@ -1,9 +1,10 @@
 $(document).ready(function(){
 
 var received = $('#console-log');
-
+var cam = document.getElementById("cam");
 
 var socket;
+var img_socket;
 
 var sendMessage = function(message) {
   console.log("sending:" + message.data);
@@ -19,8 +20,10 @@ $("#ws-connect").click(function(ev){
 
   if(window.location.protocol == 'https:') {
       socket = new WebSocket("wss://" + address + "/ws");
+      img_socket = new WebSocket("wss://" + address + "/camera");
   } else {
       socket = new WebSocket("ws://" + address + "/ws");
+      img_socket = new WebSocket("ws://" + address + "/camera");
   }
 
   socket.onopen = function(){
@@ -41,6 +44,28 @@ $("#ws-connect").click(function(ev){
     $('#connection-status').removeClass('label-success');
     $('#connection-status').addClass('label-danger');
     $('#connection-status').text('disconnected');
+  };
+
+  img_socket.binaryType = 'arraybuffer';
+
+  img_socket.onopen = function(){
+    console.log("camera connected");
+  };
+
+  img_socket.onmessage = function (message) {
+    if(typeof message.data == "object") {
+        var arrayBuffer = message.data;
+        var blob  = new Blob([new Uint8Array(arrayBuffer)], {type: "image/jpeg"});
+        cam.src = window.URL.createObjectURL(blob);
+
+        console.log(window.URL.createObjectURL(blob));
+    } else {
+        console.log("receiving: " + message.data);
+    }
+  };
+
+  img_socket.onclose = function(){
+    console.log("camera disconnected");
   };
 });
 
