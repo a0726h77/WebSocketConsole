@@ -87,7 +87,7 @@ class ImageWebSocketHandler(tornado.websocket.WebSocketHandler):
         for c in img_clients:
             c.write_message(jpeg_bytes, binary=True)
 
-        tornado.ioloop.IOLoop.instance().add_timeout(datetime.timedelta(seconds=30), self.timeout_loop)
+        tornado.ioloop.IOLoop.instance().add_timeout(datetime.timedelta(seconds=5), self.timeout_loop)
 
     def get_jpeg_image_bytes(self):
         img = self._cam.get_image()
